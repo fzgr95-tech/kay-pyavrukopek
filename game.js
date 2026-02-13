@@ -6,7 +6,7 @@ let player;
 let gameActive = false;
 let score = 0;
 // coins removed
-let speed = 30;
+let speed = 15;
 let clock;
 let groundSegments = [];
 let level = 1;
@@ -904,7 +904,7 @@ function showLevelComplete() {
     // Save candies
     saveProgress();
 
-    if (levelRewardDisplay) levelRewardDisplay.innerHTML = `${bonus} 🍭`;
+    if (levelRewardDisplay) levelRewardDisplay.innerHTML = `${bonus} x 🍭`;
 
     // Update Start Button text for next time (if they go to menu)
     if (startBtn) startBtn.innerHTML = `OYUNA BAŞLA ▶ (Seviye ${maxUnlockedLevel})`;
@@ -1679,7 +1679,7 @@ function startLevel(selectedLevel) {
     mainMenu.classList.add('hidden');
 
     // Reset for new game
-    speed = 30 + ((level - 1) * 2);
+    speed = 15 + ((level - 1) * 2);
     levelDistance = 50 + (level * 25);
     currentDistance = 0;
     score = 0;

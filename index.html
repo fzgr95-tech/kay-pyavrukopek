@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kayıp Yavru Köpek: Şeker Diyarı</title>
-    <link rel="stylesheet" href="style.css?v=2.4">
+    <link rel="stylesheet" href="style.css">
     <style>
         body {
             margin: 0;
@@ -84,16 +84,14 @@
     <div id="game-container">
         <!-- Main Menu -->
         <div id="main-menu" class="ui-screen">
-            <h1>🐶 Kayıp Yavru Köpek 🍬 <small style="font-size: 0.4em; color: #555;">v2.0</small></h1>
-            <p>Şeker Diyarı Macerası</p>
+            <h1>🐶 Kayıp Yavru Köpek 🍬</h1>
             <div style="display:flex; flex-direction:column; gap:10px; width:200px; margin:0 auto;">
-                <button id="start-btn" class="btn-primary" style="width:100%;">OYUNA BAŞLA ▶</button>
+                <button id="start-btn" class="btn-primary" style="width:100%;">OYUNA BAŞLA</button>
                 <button id="shop-btn" class="btn-secondary" style="background-color: #be6216; width:100%;">MAĞAZA
                     🏪</button>
                 <button id="levels-btn" class="btn-secondary" style="background-color: #4CAF50; width:100%;">SEVİYELER
                     🗺️</button>
             </div>
-            <p class="instructions">Yön Tuşları veya A/D ile Hareket Et<br>Boşluk ile Zıpla</p>
         </div>
 
         <!-- Level Select Menu -->
@@ -150,7 +148,7 @@
         <!-- Level Complete Screen -->
         <div id="level-complete" class="ui-screen hidden" style="background: rgba(255,255,255,0.9); z-index: 20;">
             <h2>🎉 Seviye Tamamlandı! 🍬</h2>
-            <p>Bonus: <span id="level-reward">0</span> Şeker</p>
+            <p>Bonus: <span id="level-reward">0</span></p>
             <button id="next-level-btn" class="btn-primary">SONRAKİ SEVİYE ▶</button>
             <button id="main-menu-btn-2" class="btn-secondary" onclick="location.reload()"> ANA MENÜ 🏠</button>
         </div>
@@ -165,7 +163,7 @@
         </div>
     </div>
 
-    <script type="module" src="game.js?v=2.1"></script>
+    <script type="module" src="game.js"></script>
 </body>
 
 </html>
