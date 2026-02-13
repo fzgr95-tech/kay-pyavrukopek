@@ -266,6 +266,9 @@ function init() {
         // Clock
         clock = new THREE.Clock();
 
+        // Initial Camera Setup
+        updateCameraPosition();
+
         // Resize Event
         window.addEventListener('resize', onWindowResize, false);
 
@@ -1696,6 +1699,20 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    updateCameraPosition();
+}
+
+function updateCameraPosition() {
+    const aspect = window.innerWidth / window.innerHeight;
+    if (aspect < 1) {
+        // Portrait (Mobile) - Pull back to see side lanes
+        camera.position.z = 12;
+        camera.position.y = 5;
+    } else {
+        // Landscape (Desktop) - Standard view
+        camera.position.z = 8;
+        camera.position.y = 4;
+    }
 }
 
 function updateUI() {
@@ -1715,6 +1732,13 @@ function animate() {
     if (gameActive && !gamePaused) {
         updatePhysics(delta);
         updateEffects(delta);
+
+        // Camera Follow Logic (Smooth X-axis)
+        if (player) {
+            const targetCamX = player.position.x * 0.5; // Follow 50% of player movement
+            camera.position.x += (targetCamX - camera.position.x) * delta * 5;
+            camera.lookAt(0, 0, -5); // Keep looking forward
+        }
     }
     renderer.render(scene, camera);
 }
