@@ -347,3 +347,59 @@ button:active {
         transform: translateY(0);
     }
 }
+
+/* MOBILE RESPONSIVE HUD */
+@media (max-width: 768px) {
+    #hud {
+        padding: 10px;
+        gap: 5px;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        box-sizing: border-box;
+        /* Ensure padding doesn't overflow width */
+    }
+
+    #score-container,
+    #distance-container {
+        font-size: 0.9rem;
+        padding: 4px 8px;
+        border-width: 2px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.7);
+        /* More transparent */
+        margin: 0;
+        white-space: nowrap;
+        /* Prevent line breaks */
+    }
+
+    .candy-counters {
+        gap: 5px;
+    }
+
+    .candy-counter {
+        padding: 4px 8px;
+        font-size: 0.9rem;
+        border-width: 2px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Pause button adjustment */
+    #pause-btn {
+        font-size: 1.5rem !important;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Shop adjustments for mobile */
+    .shop-item {
+        width: 90px;
+        /* Smaller items */
+    }
+
+    .shop-tab-btn {
+        padding: 8px 5px;
+        font-size: 0.8rem;
+    }
+}
