@@ -23,8 +23,13 @@
 button,
 h1,
 h2,
-p {
+p,
+#shop-items,
+#level-grid,
+.shop-tabs {
     pointer-events: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Smooth scroll on iOS */
 }
 
 /* Typography & Colors */
