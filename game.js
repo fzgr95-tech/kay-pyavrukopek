@@ -44,6 +44,11 @@ let finishLineObject = null;
 let isGhost = false;
 let ghostTimer = 0;
 
+// Input State
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+
 // Shop Variables
 // Shop Variables
 // 1. Colors (Body Skins)
