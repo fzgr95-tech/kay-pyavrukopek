@@ -20,6 +20,8 @@ let candies = {
     blue: 0,
     gold: 0
 };
+let highScore = 0;
+let themeOverride = null;
 const SEGMENT_COUNT = 15;
 
 // Player Variables
@@ -129,14 +131,14 @@ const themes = {
         background: 0xffe6f2, // Pinkish
         fog: 0xffe6f2,
         ground: 0xffccff,
-        ui: "rgba(255,230,242,0.95)", // Pale Pink
+        ui: "linear-gradient(135deg, #ff9ff3 0%, #feca57 100%)",
         skyColor: 0xffe6f2
     },
     world2: {
         background: 0x0f0c29, // Dark Blue/Purple
         fog: 0x0f0c29,
         ground: 0x302b63, // Dark Purple Ground
-        ui: "rgba(15, 12, 41, 0.95)", // Dark UI
+        ui: "linear-gradient(135deg, #2c3e50 0%, #3498db 100%)",
         skyColor: 0x0f0c29
     }
 };
@@ -144,9 +146,11 @@ const themes = {
 // --- Theme Logic ---
 function applyTheme(currentLevel) {
     let theme = themes.world1;
-    if (currentLevel >= 21) {
-        theme = themes.world2;
-    }
+
+    // Check override or level
+    if (themeOverride === 'dark') theme = themes.world2;
+    else if (themeOverride === 'light') theme = themes.world1;
+    else if (currentLevel >= 21) theme = themes.world2;
 
     // Apply 3D Scene Colors
     if (scene) {
@@ -155,26 +159,39 @@ function applyTheme(currentLevel) {
     }
 
     // Apply Ground Color
-    // We need to access the ground materials. 
-    // Since ground segments are recreated or we might want to just update existing ones.
-    // Ideally, we update the global ground material variable if we had one, or traverse.
-    // For simplicity, we will just update the background causing the "atmosphere" to change.
-    // But let's try to update ground segments if possible.
     groundSegments.forEach(seg => {
         if (seg.material) seg.material.color.setHex(theme.ground);
     });
 
-    // Apply UI Colors
-    if (mainMenu) mainMenu.style.background = theme.ui;
-    if (shopMenu) shopMenu.style.background = theme.ui;
-    if (levelMenu) levelMenu.style.background = theme.ui;
+    // Apply UI Background (Body)
+    document.body.style.background = theme.ui;
 
-    // Text Color Adjustment for Dark Mode
-    const textColor = (currentLevel >= 21) ? '#fff' : '#444';
+    // Text Color Adjustment
+    const isDark = (theme === themes.world2);
+    const textColor = isDark ? '#ecf0f1' : '#2f3542';
     document.body.style.color = textColor;
 
     const titles = document.querySelectorAll('h1, h2, h3, p');
-    titles.forEach(t => t.style.color = textColor);
+    titles.forEach(t => {
+        if (!t.classList.contains('shop-item-name')) { // Skip shop items
+            t.style.color = isDark && t.tagName !== 'P' ? '#ecf0f1' : '';
+        }
+    });
+
+    // Toggle Button Icon
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (toggleBtn) toggleBtn.innerText = isDark ? '🌞' : '🌓';
+}
+
+function toggleTheme() {
+    if (themeOverride === 'dark') themeOverride = 'light';
+    else if (themeOverride === 'light') themeOverride = null; // Auto
+    else themeOverride = 'dark';
+
+    // Save preference
+    localStorage.setItem('puppyr_theme_override', themeOverride || '');
+
+    applyTheme(level);
 }
 
 // --- Initialization ---
@@ -223,11 +240,14 @@ function init() {
 
         loadProgress();
 
-        // DEV: Give free resources for testing accessories
         // coins = 5000;
         // candies.pink = 500;
         // candies.blue = 500;
         saveProgress();
+
+        // Update High Score UI
+        const highScoreSpan = document.getElementById('high-score-val');
+        if (highScoreSpan) highScoreSpan.innerText = Math.floor(highScore);
 
         applyTheme(level); // Apply theme on startup based on loaded level
 
@@ -254,14 +274,22 @@ function init() {
         document.body.appendChild(renderer.domElement);
 
         // Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-        scene.add(ambientLight);
+        // Lighting - ENHANCED
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+        hemiLight.position.set(0, 20, 0);
+        scene.add(hemiLight);
+
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
         dirLight.position.set(20, 50, 20);
         dirLight.castShadow = true;
-        dirLight.shadow.mapSize.width = 1024;
-        dirLight.shadow.mapSize.height = 1024;
+        dirLight.shadow.mapSize.width = 2048; // Increased shadow quality
+        dirLight.shadow.mapSize.height = 2048;
+        dirLight.shadow.camera.near = 0.5;
+        dirLight.shadow.camera.far = 500;
         scene.add(dirLight);
+
+        // Background Floating Particles
+        createBackgroundParticles();
 
         // Clock
         clock = new THREE.Clock();
@@ -348,6 +376,10 @@ function init() {
         const nextWorldBtn = document.getElementById('next-world-btn');
         if (prevWorldBtn) prevWorldBtn.addEventListener('click', prevWorld);
         if (nextWorldBtn) nextWorldBtn.addEventListener('click', nextWorld);
+
+        // Theme Toggle
+        const themeBtn = document.getElementById('theme-toggle');
+        if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
 
         // Pause Listeners
         const pauseBtn = document.getElementById('pause-btn');
@@ -475,6 +507,14 @@ function loadProgress() {
             maxUnlockedLevel = level; // Default to current level if no max saved
         }
 
+        const savedHighScore = localStorage.getItem('puppyr_highscore');
+        if (savedHighScore) {
+            highScore = parseInt(savedHighScore);
+        }
+
+        const savedTheme = localStorage.getItem('puppyr_theme_override');
+        if (savedTheme) themeOverride = savedTheme;
+
     } catch (e) {
         console.error("Load Progress Error:", e);
         // Reset defaults on catastrophic error
@@ -497,6 +537,7 @@ function saveProgress() {
     localStorage.setItem('puppyr_candies', JSON.stringify(candies));
     localStorage.setItem('puppyr_level', level);
     localStorage.setItem('puppyr_max_level', maxUnlockedLevel);
+    localStorage.setItem('puppyr_highscore', highScore);
 }
 
 // --- World Creation ---
@@ -529,7 +570,12 @@ function createPlayer() {
 
     // Body (Color)
     const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshToonMaterial({ color: activeColor.color });
+    // Updated Material to Standard for better lighting interaction
+    const material = new THREE.MeshStandardMaterial({
+        color: activeColor.color,
+        roughness: 0.4,
+        metalness: 0.1
+    });
     player = new THREE.Mesh(geometry, material);
     player.position.set(0, 0.5, 0);
     player.castShadow = true;
@@ -1306,6 +1352,16 @@ function gameOver() {
     if (gameOverScreen) gameOverScreen.classList.remove('hidden');
     if (finalScoreDisplay) finalScoreDisplay.innerText = Math.floor(score);
     if (hud) hud.classList.add('hidden');
+
+    // Save High Score
+    if (score > highScore) {
+        highScore = Math.floor(score);
+        localStorage.setItem('puppyr_highscore', highScore);
+
+        // Update Main Menu Badge
+        const highScoreSpan = document.getElementById('high-score-val');
+        if (highScoreSpan) highScoreSpan.innerText = highScore;
+    }
 }
 
 function clearGameObjects() {
@@ -1796,6 +1852,34 @@ function createTrailParticle(x, y, z) {
     particles.push(mesh);
 }
 
+// Background Particles System
+let bgParticlesMesh;
+function createBackgroundParticles() {
+    const particleCount = 200;
+    const geometry = new THREE.BufferGeometry();
+    const positions = [];
+    const colors = [];
+    const color = new THREE.Color();
+
+    for (let i = 0; i < particleCount; i++) {
+        const x = (Math.random() - 0.5) * 100;
+        const y = (Math.random() - 0.5) * 50 + 20;
+        const z = -Math.random() * 100;
+        positions.push(x, y, z);
+
+        // Random pastel colors
+        color.setHSL(Math.random(), 0.7, 0.8);
+        colors.push(color.r, color.g, color.b);
+    }
+
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+    const material = new THREE.PointsMaterial({ size: 0.5, vertexColors: true, transparent: true, opacity: 0.8 });
+    bgParticlesMesh = new THREE.Points(geometry, material);
+    scene.add(bgParticlesMesh);
+}
+
 function updateEffects(delta) {
     // Ghost Mode Logic
     if (isGhost) {
@@ -1853,6 +1937,12 @@ function updateEffects(delta) {
             trailTimer = 0;
             createTrailParticle(player.position.x, player.position.y + 0.2, player.position.z + 0.5);
         }
+    }
+
+    // Animate Background Particles
+    if (bgParticlesMesh) {
+        bgParticlesMesh.rotation.y += delta * 0.05;
+        bgParticlesMesh.rotation.x += delta * 0.02;
     }
 }
 

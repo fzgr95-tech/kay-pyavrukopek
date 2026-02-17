@@ -80,86 +80,132 @@
 
 <body>
     <div id="error-box"></div>
-    <div id="loading-msg">Oyun Yükleniyor...<br><small style="font-size:1rem; color: #666;">Bekleyiniz...</small></div>
+    <div id="loading-msg">
+        <div style="font-size: 3rem;">🐶</div>
+        <div>ŞEKER DİYARI</div>
+        <small style="font-size: 1rem; opacity: 0.7;">Yükleniyor...</small>
+    </div>
+
     <div id="game-container">
+
         <!-- Main Menu -->
         <div id="main-menu" class="ui-screen">
-            <h1>🐶 Kayıp Yavru Köpek 🍬</h1>
-            <div style="display:flex; flex-direction:column; gap:10px; width:200px; margin:0 auto;">
-                <button id="start-btn" class="btn-primary" style="width:100%;">OYUNA BAŞLA</button>
-                <button id="shop-btn" class="btn-secondary" style="background-color: #be6216; width:100%;">MAĞAZA
-                    🏪</button>
-                <button id="levels-btn" class="btn-secondary" style="background-color: #4CAF50; width:100%;">SEVİYELER
-                    🗺️</button>
+            <!-- New Features -->
+            <button id="theme-toggle" title="Tema Değiştir">🌓</button>
+            <div id="high-score-display" class="high-score-badge">🏆 EN İYİ: <span id="high-score-val">0</span></div>
+
+            <div class="glass-panel">
+                <h1>Kayıp Yavru Köpek</h1>
+                <p style="margin-bottom: 20px;">🍬 Şeker Diyarı Macerası 🍬</p>
+
+                <div
+                    style="display:flex; flex-direction:column; gap:15px; width: 100%; max-width: 300px; margin: 0 auto;">
+                    <button id="start-btn" class="btn-primary">OYUNA BAŞLA ▶</button>
+                    <button id="shop-btn" class="btn-accent">MAĞAZA 🏪</button>
+                    <button id="levels-btn" class="btn-secondary">SEVİYELER 🗺️</button>
+                </div>
             </div>
         </div>
 
         <!-- Level Select Menu -->
-        <div id="level-menu" class="ui-screen hidden" style="background: rgba(230,255,250,0.95); z-index: 10;">
-            <h2>🗺️ Bölüm Seç 📍</h2>
+        <div id="level-menu" class="ui-screen hidden">
+            <div class="glass-panel" style="width: 90%; max-width: 800px;">
+                <h2>🗺️ BÖLÜM SEÇ</h2>
 
-            <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 10px;">
-                <button id="prev-world-btn" class="btn-secondary" style="padding: 5px 15px;">◀</button>
-                <h3 id="world-title" style="margin: 0; color: #444;">Dünya 1</h3>
-                <button id="next-world-btn" class="btn-secondary" style="padding: 5px 15px;">▶</button>
-            </div>
+                <div
+                    style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 15px;">
+                    <button id="prev-world-btn" class="btn-secondary"
+                        style="padding: 5px 15px; border-radius: 10px;">◀</button>
+                    <h3 id="world-title" style="margin: 0; color: var(--text-main); font-family: 'Fredoka One';">Dünya 1
+                    </h3>
+                    <button id="next-world-btn" class="btn-secondary"
+                        style="padding: 5px 15px; border-radius: 10px;">▶</button>
+                </div>
 
-            <div id="level-grid"
-                style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; max-width: 600px; margin: 20px auto; overflow-y: auto; max-height: 50vh;">
-                <!-- Levels will be populated by JS -->
+                <div class="scroll-container">
+                    <div id="level-grid" class="interactive">
+                        <!-- Levels will be populated by JS -->
+                    </div>
+                </div>
+
+                <button id="level-back-btn" class="btn-danger" style="margin-top: 20px;">GERİ DÖN ↩️</button>
             </div>
-            <button id="level-back-btn" class="btn-secondary">GERİ DÖN ↩️</button>
         </div>
 
         <!-- Shop Menu -->
-        <div id="shop-menu" class="ui-screen hidden" style="background: rgba(255,230,242,0.95); z-index: 10;">
-            <h2>🐶 Köpek Mağazası 🏪</h2>
-            <div id="shop-coins">Mevcut Şeker: <span id="shop-coins-val">0</span> 🍬</div>
-            <div id="shop-items"
-                style="display: flex; flex-direction: column; gap: 20px; margin: 20px; overflow-y: auto; max-height: 70vh;">
-                <!-- Items will be populated by JS -->
+        <div id="shop-menu" class="ui-screen hidden">
+            <div class="glass-panel" style="width: 90%; max-width: 600px;">
+                <h2>MAĞAZA 🏪</h2>
+
+                <div class="shop-currency-header">
+                    Mevcut Şeker: <span id="shop-coins-val" style="color: var(--primary-color);">0</span> 🍬
+                </div>
+
+                <div class="shop-tabs">
+                    <button class="shop-tab-btn active-tab" data-tab="colors">Renkler</button>
+                    <button class="shop-tab-btn" data-tab="accessories">Aksesuar</button>
+                    <button class="shop-tab-btn" data-tab="trails">İzler</button>
+                </div>
+
+                <div class="scroll-container">
+                    <div id="shop-items" class="interactive">
+                        <!-- Items will be populated by JS -->
+                    </div>
+                </div>
+
+                <button id="back-btn" class="btn-danger" style="margin-top: 20px;">KAPAT ❌</button>
             </div>
-            <button id="back-btn" class="btn-secondary">GERİ DÖN ↩️</button>
         </div>
 
         <!-- HUD (Heads Up Display) -->
         <div id="hud" class="hidden">
-            <div id="score-container"><span id="score">0</span></div>
-            <div id="distance-container">Mesafe: <span id="distance">0</span>m / <span id="level-target">250</span>m
+            <div class="hud-group">
+                <div class="hud-item" id="score-container">⭐ <span id="score">0</span></div>
+                <div class="hud-item" id="distance-container">📍 <span id="distance">0</span>m</div>
             </div>
 
-            <div class="candy-counters">
-                <div class="candy-counter" style="color: #ff3366;">🍭 <span id="candy-pink">0</span></div>
-                <div class="candy-counter" style="color: #3399ff;">🍬 <span id="candy-blue">0</span></div>
+            <div class="hud-group">
+                <div class="hud-item" style="color: #ff6b81;">🍭 <span id="candy-pink">0</span></div>
+                <div class="hud-item" style="color: #54a0ff;">🍬 <span id="candy-blue">0</span></div>
+                <button id="pause-btn">⏸️</button>
             </div>
-
-            <!-- Total Currency Removed -->
-
-            <button id="pause-btn" style="background: none; border: none; font-size: 2rem; cursor: pointer;">⏸️</button>
         </div>
 
         <!-- Pause Menu -->
-        <div id="pause-menu" class="ui-screen hidden" style="background: rgba(0,0,0,0.5); z-index: 20;">
-            <h2>Oyun Duraklatıldı ⏸️</h2>
-            <button id="resume-btn" class="btn-primary">DEVAM ET ▶</button>
-            <button id="quit-btn" class="btn-secondary">ANA MENÜ 🏠</button>
+        <div id="pause-menu" class="ui-screen hidden" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);">
+            <div class="glass-panel">
+                <h2>DURAKLATILDI ⏸️</h2>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button id="resume-btn" class="btn-primary">DEVAM ET ▶</button>
+                    <button id="quit-btn" class="btn-danger">ANA MENÜ 🏠</button>
+                </div>
+            </div>
         </div>
 
         <!-- Level Complete Screen -->
-        <div id="level-complete" class="ui-screen hidden" style="background: rgba(255,255,255,0.9); z-index: 20;">
-            <h2>🎉 Seviye Tamamlandı! 🍬</h2>
-            <p>Bonus: <span id="level-reward">0</span></p>
-            <button id="next-level-btn" class="btn-primary">SONRAKİ SEVİYE ▶</button>
-            <button id="main-menu-btn-2" class="btn-secondary" onclick="location.reload()"> ANA MENÜ 🏠</button>
+        <div id="level-complete" class="ui-screen hidden">
+            <div class="glass-panel">
+                <h2>🎉 SEVİYE TAMAMLANDI!</h2>
+                <div style="font-size: 4rem; margin: 20px;">⭐⭐⭐</div>
+                <p>Kazanılan Bonus: <span id="level-reward" style="color: var(--success-color);">0</span></p>
+
+                <button id="next-level-btn" class="btn-primary">SONRAKİ SEVİYE ▶</button>
+                <button id="main-menu-btn-2" class="btn-secondary" onclick="location.reload()"> ANA MENÜ 🏠</button>
+            </div>
         </div>
 
         <!-- Game Over Screen -->
         <div id="game-over" class="ui-screen hidden">
-            <h2>Oyun Bitti! 😢</h2>
-            <p>Skorun: <span id="final-score">0</span></p>
-            <button id="restart-btn" class="btn-secondary">Tekrar Dene 🔄</button>
-            <button id="main-menu-btn" class="btn-secondary" style="background-color: #ff99cc;">Ana Menü 🏠</button>
-            <button id="ad-revive-btn" class="btn-ad">📺 Reklam İzle ve Devam Et (+1 Can)</button>
+            <div class="glass-panel">
+                <h2 style="color: var(--danger-color);">OYUN BİTTİ 😢</h2>
+                <p>Toplam Skor: <span id="final-score" style="font-size: 1.5rem;">0</span></p>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                    <button id="ad-revive-btn" class="btn-ad">📺 REKLAM İZLE (+1 CAN)</button>
+                    <button id="restart-btn" class="btn-primary">TEKRAR DENE 🔄</button>
+                    <button id="main-menu-btn" class="btn-secondary">ANA MENÜ 🏠</button>
+                </div>
+            </div>
         </div>
     </div>
 
